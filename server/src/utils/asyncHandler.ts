@@ -1,0 +1,36 @@
+import type {
+    Request,
+    Response,
+    NextFunction,
+    RequestHandler,
+} from "express";
+import type { ParamsDictionary } from "express-serve-static-core";
+import type { ParsedQs } from "qs";
+
+type AsyncHandler<
+    P = ParamsDictionary,
+    ResBody = unknown,
+    ReqBody = unknown,
+    ReqQuery = ParsedQs,
+    Locals extends Record<string, unknown> = Record<string, unknown>,
+> = (
+    req: Request<P, ResBody, ReqBody, ReqQuery, Locals>,
+    res: Response<ResBody, Locals>,
+    next: NextFunction
+) => Promise<unknown>;
+
+const asyncHandler = <
+    P = ParamsDictionary,
+    ResBody = unknown,
+    ReqBody = unknown,
+    ReqQuery = ParsedQs,
+    Locals extends Record<string, unknown> = Record<string, unknown>,
+>(
+    handler: AsyncHandler<P, ResBody, ReqBody, ReqQuery, Locals>
+): RequestHandler<P, ResBody, ReqBody, ReqQuery, Locals> => {
+    return (req, res, next) => {
+        Promise.resolve(handler(req, res, next)).catch(next);
+    };
+};
+
+export default asyncHandler;
