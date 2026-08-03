@@ -2,6 +2,7 @@ import authServiceClass from "@/services/auth/auth.service.js";
 import ApiError from "@/utils/api.error.js";
 import ApiResponse from "@/utils/api.response.js";
 import asyncHandler from "@/utils/asyncHandler.js";
+import { generateToken } from "@/utils/token.js";
 
 import type { Request, Response } from "express";
 
@@ -14,7 +15,12 @@ class AuthController {
         if (!user) {
             throw new ApiError(500, "Failed to create user");
         }
-
+        const token = generateToken({
+            name: user.name,
+            email: user.email,
+            _id: user._id
+        })
+        res.cookie("token", token)
         return res.status(201).json(
             new ApiResponse(201, "User registered successfully", user)
         );
@@ -27,6 +33,13 @@ class AuthController {
             throw new ApiError(401, "Invalid email or password");
         }
 
+        const token = generateToken({
+            name: user.name,
+            email: user.email,
+            _id: user._id
+        })
+        res.cookie("token", token)
+        
         return res.status(200).json(
             new ApiResponse(200, "Login successful", user)
         );
