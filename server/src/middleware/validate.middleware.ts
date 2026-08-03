@@ -10,12 +10,8 @@ const validate =
                     params: req.params,
                     query: req.query,
                 });
-                //@ts-ignore
+
                 req.body = parsed.body;
-                //@ts-ignore
-                req.params = parsed.params;
-                //@ts-ignore
-                req.query = parsed.query;
 
                 next();
             } catch (error) {
@@ -23,4 +19,4 @@ const validate =
             }
         };
 
-export default validate;
+export default validate
